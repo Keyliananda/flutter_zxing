@@ -4,6 +4,7 @@ import '../pages/history_page.dart';
 import '../pages/home_page.dart';
 import '../pages/scanner_page.dart';
 import '../pages/settings_page.dart';
+import '../pages/camera_test_page.dart';
 
 abstract class AppRoutes {
   static const String creator = '/creator';
@@ -11,6 +12,7 @@ abstract class AppRoutes {
   static const String home = '/';
   static const String scanner = '/scanner';
   static const String settings = '/settings';
+  static const String cameraTest = '/camera-test';
 }
 
 class AppRouter {
@@ -35,6 +37,10 @@ class AppRouter {
       case AppRoutes.settings:
         return MaterialPageRoute<void>(
           builder: (_) => const SettingsPage(),
+        );
+      case AppRoutes.cameraTest:
+        return MaterialPageRoute<void>(
+          builder: (_) => const CameraTestPage(),
         );
       default:
         return MaterialPageRoute<void>(

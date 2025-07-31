@@ -1,1 +1,4 @@
-framework module flutter_zxing {}
+framework module flutter_zxing {
+  umbrella header "native_zxing.h"
+  export *
+}

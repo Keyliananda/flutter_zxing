@@ -14,6 +14,8 @@ A new flutter plugin project.
   s.author           = { 'Your Company' => 'email@example.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
+  s.public_header_files = 'Classes/src/native_zxing.h'
+  s.private_header_files = 'Classes/src/zxing/**/*.h', 'Classes/src/dart_alloc.h', 'Classes/src/zxcommon.h'
   s.dependency 'Flutter'
   s.platform = :ios, '12.0'
 

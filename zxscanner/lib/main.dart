@@ -18,7 +18,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializePrefs();
   await DbService.instance.initializeApp();
-  zx.setLogEnabled(kDebugMode);
+  // Temporarily disabled due to FFI binding issue
+  // zx.setLogEnabled(kDebugMode);
   runApp(const MyApp());
 }
 

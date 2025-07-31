@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
- platform :ios, '16.0'
+platform :ios, '16.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -28,7 +28,8 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 flutter_ios_podfile_setup
 
 target 'Runner' do
-  use_frameworks!
+  # Flutter's Podhelper will das Framework korrekt einbinden
+  # use_frameworks! :linkage => :static
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
@@ -37,5 +38,37 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+    
+    target.build_configurations.each do |config|
+      # Force iOS deployment target for all pods
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
+      # Nicht modulare Includes generell erlauben
+      config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+      # Module VERIFIKATION abschalten für flutter_zxing
+      if target.name == 'flutter_zxing'
+        config.build_settings['DEFINES_MODULE'] = 'NO'
+      end
+      # Force angle-bracket imports und DEFINES_MODULE für share_plus
+      if target.name == 'share_plus'
+        config.build_settings['DEFINES_MODULE'] = 'NO'
+      end
+      # ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES für statische Libraries deaktivieren
+      if target.name == 'flutter_zxing'
+        config.build_settings['ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES'] = 'NO'
+        # C++-Warnungen unterdrücken
+        config.build_settings['OTHER_CFLAGS'] = '$(inherited) -Wno-implicit-int-conversion -Wno-deprecated-declarations -Wno-comma -Wno-uninitialized -Wno-unused-variable'
+        config.build_settings['OTHER_CPLUSPLUSFLAGS'] = '$(inherited) -Wno-implicit-int-conversion -Wno-deprecated-declarations -Wno-comma -Wno-uninitialized -Wno-unused-variable'
+        config.build_settings['GCC_WARN_INHIBIT_ALL_WARNINGS'] = 'YES'
+      end
+      
+      # Deprecated API Warnungen für alle Plugins unterdrücken
+      config.build_settings['OTHER_CFLAGS'] = '$(inherited) -Wno-deprecated-declarations'
+      config.build_settings['OTHER_CPLUSPLUSFLAGS'] = '$(inherited) -Wno-deprecated-declarations'
+      
+      # Swift-Stdlib-Tool Warnung unterdrücken
+      if target.name == 'Pods-Runner'
+        config.build_settings['ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES'] = 'NO'
+      end
+    end
   end
 end

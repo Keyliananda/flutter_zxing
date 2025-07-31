@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../configs/app_store.dart';
 import '../configs/constants.dart';
 import '../generated/l10n.dart';
+import '../utils/router.dart';
 import '../widgets/common_widgets.dart';
 
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -56,6 +57,14 @@ class _SettingsPageState extends State<SettingsPage> {
               //     },
               //   ),
               // ),
+              SettingTile(
+                context,
+                leading: Icons.camera_alt,
+                title: 'Camera Test',
+                onTap: () {
+                  Navigator.pushNamed(context, AppRoutes.cameraTest);
+                },
+              ),
             ],
           ),
         ),
