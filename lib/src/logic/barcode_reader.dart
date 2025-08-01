@@ -36,5 +36,11 @@ Future<Code> zxingReadBarcodeImageUrl(String url, DecodeParams params) async {
 Code zxingReadBarcode(Uint8List bytes, DecodeParams params) =>
     _readBarcode(bytes, params);
 
-Code _readBarcode(Uint8List bytes, DecodeParams params) =>
-    bindings.readBarcode(params.toDecodeBarcodeParams(bytes)).toCode();
+Code _readBarcode(Uint8List bytes, DecodeParams params) {
+  try {
+    return bindings.readBarcode(params.toDecodeBarcodeParams(bytes)).toCode();
+  } catch (e) {
+    print('Barcode reading error: $e');
+    return Code(error: 'Failed to read barcode: $e');
+  }
+}

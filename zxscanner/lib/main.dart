@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_zxing/flutter_zxing.dart';
 
 import 'configs/app_store.dart';
 import 'configs/app_theme.dart';

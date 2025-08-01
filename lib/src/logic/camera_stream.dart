@@ -17,9 +17,14 @@ Future<dynamic> zxingProcessCameraImage(
 
 /// Runs inference in another isolate
 Future<dynamic> _inference(IsolateData isolateData) async {
-  final ReceivePort responsePort = ReceivePort();
-  isolateUtils?.sendPort
-      ?.send(isolateData..responsePort = responsePort.sendPort);
-  final dynamic results = await responsePort.first;
-  return results;
+  try {
+    final ReceivePort responsePort = ReceivePort();
+    isolateUtils?.sendPort
+        ?.send(isolateData..responsePort = responsePort.sendPort);
+    final dynamic results = await responsePort.first;
+    return results;
+  } catch (e) {
+    print('Camera inference error: $e');
+    return Code(error: 'Camera processing failed: $e');
+  }
 }

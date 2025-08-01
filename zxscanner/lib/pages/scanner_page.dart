@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_zxing/flutter_zxing.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../models/models.dart' as model;
 import '../utils/db_service.dart';
@@ -46,43 +46,20 @@ class _ScannerPageState extends State<ScannerPage> {
           ),
           // Scanner widget
           Expanded(
-            child: ReaderWidget(
-        actionButtonsAlignment: Alignment.topCenter,
-        onScan: (dynamic result) async {
-          if (result is Code) {
-            addCode(result);
-          } else {
-            print('Scan error: $result');
-            setState(() {
-              _debugInfo = 'Scan Error: $result';
-            });
-          }
-        },
-              onControllerCreated: (controller, error) {
-                setState(() {
-                  if (error != null) {
-                    _debugInfo = 'Camera Error: ${error.toString()}';
-                    _isCameraReady = false;
-                  } else if (controller != null) {
-                    _debugInfo = 'Camera Ready: ${controller.description.name}';
-                    _isCameraReady = true;
-                  } else {
-                    _debugInfo = 'Camera Controller: null';
-                    _isCameraReady = false;
-                  }
-                });
-                print('Camera Controller Created: $controller, Error: $error');
+            child: MobileScanner(
+              onDetect: (capture) {
+                final List<Barcode> barcodes = capture.barcodes;
+                if (barcodes.isNotEmpty) {
+                  final Barcode barcode = barcodes.first;
+                  addBarcode(barcode);
+                }
               },
-                             onScanFailure: (dynamic result) {
-                 setState(() {
-                   if (result is Code) {
-                     _debugInfo = 'Scan Failed: ${result.error ?? 'Unknown error'}';
-                   } else {
-                     _debugInfo = 'Scan Failed: $result';
-                   }
-                 });
-                 print('Scan Failed: $result');
-               },
+              onScannerStarted: (value) {
+                setState(() {
+                  _debugInfo = 'Scanner Started: ${value.toString()}';
+                  _isCameraReady = true;
+                });
+              },
             ),
           ),
         ],
@@ -90,8 +67,12 @@ class _ScannerPageState extends State<ScannerPage> {
     );
   }
 
-  void addCode(Code result) {
-    final model.Code code = model.Code.fromCodeResult(result);
+  void addBarcode(Barcode barcode) {
+    final model.Code code = model.Code();
+    code.isValid = true;
+    code.format = barcode.format.index;
+    code.text = barcode.rawValue;
+    
     DbService.instance.addCode(code);
     context.showToast('Barcode saved:\n${code.text ?? ''}');
     setState(() {

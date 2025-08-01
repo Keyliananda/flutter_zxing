@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_zxing/flutter_zxing.dart';
+// import 'package:flutter_zxing/flutter_zxing.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -53,19 +53,19 @@ class _CreatorPageState extends State<CreatorPage> {
         child: ContainerX(
           child: Column(
             children: <Widget>[
-              WriterWidget(
-                onSuccess: (Encode result, Uint8List? bytes) {
-                  setState(() {
-                    encode = model.Encode.fromEncodeResult(result, bytes);
-                  });
-                },
-                onError: (String error) {
-                  setState(() {
-                    encode = null;
-                  });
-                  context.showToast(error);
-                },
-              ),
+              // WriterWidget(
+              //   onSuccess: (Encode result, Uint8List? bytes) {
+              //     setState(() {
+              //       encode = model.Encode.fromEncodeResult(result, bytes);
+              //     });
+              //   },
+              //   onError: (String error) {
+              //     setState(() {
+              //       encode = null;
+              //     });
+              //     context.showToast(error);
+              //   },
+              // ),
               if (encode != null) buildWriteResult(),
             ],
           ),

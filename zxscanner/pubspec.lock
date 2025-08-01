@@ -402,13 +402,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_zxing:
-    dependency: "direct main"
-    description:
-      path: ".."
-      relative: true
-    source: path
-    version: "2.1.0"
   font_awesome_flutter:
     dependency: "direct main"
     description:
@@ -697,6 +690,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  mobile_scanner:
+    dependency: "direct main"
+    description:
+      name: mobile_scanner
+      sha256: "1b60b8f9d4ce0cb0e7d7bc223c955d083a0737bee66fa1fcfe5de48225e0d5b3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.5.7"
   mobx:
     dependency: "direct main"
     description:
