@@ -18,6 +18,9 @@ Flutter ZXing is a high-performance Flutter plugin for scanning and generating Q
   - [Getting Started](#getting-started)
     - [Cloning the flutter\_zxing project](#cloning-the-flutter_zxing-project)
     - [Installing dependencies](#installing-dependencies)
+    - [Use with dependency\_overrides](#use-with-dependency_overrides)
+      - [Recommended Approach: Using a Git Submodule](#recommended-approach-using-a-git-submodule)
+      - [Why Not Use a Direct Git Reference?](#why-not-use-a-direct-git-reference)
   - [Usage](#usage)
     - [To read barcode](#to-read-barcode)
     - [To create barcode](#to-create-barcode)
@@ -254,3 +257,6 @@ if (result.isValid && result.data != null) {
 ## License
 
 MIT License. See [LICENSE](https://github.com/khoren93/flutter_zxing/blob/master/LICENSE).
+
+
+asdf
