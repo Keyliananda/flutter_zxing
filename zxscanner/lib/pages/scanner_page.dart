@@ -15,8 +15,7 @@ class ScannerPage extends StatefulWidget {
 }
 
 class _ScannerPageState extends State<ScannerPage> {
-  String _debugInfo = 'Initializing...';
-  bool _isCameraReady = false;
+  String _debugInfo = 'Scanner ready';
 
   @override
   Widget build(BuildContext context) {
@@ -54,12 +53,6 @@ class _ScannerPageState extends State<ScannerPage> {
                   addBarcode(barcode);
                 }
               },
-              onScannerStarted: (value) {
-                setState(() {
-                  _debugInfo = 'Scanner Started: ${value.toString()}';
-                  _isCameraReady = true;
-                });
-              },
             ),
           ),
         ],
@@ -73,11 +66,111 @@ class _ScannerPageState extends State<ScannerPage> {
     code.format = barcode.format.index;
     code.text = barcode.rawValue;
     
+    print('DEBUG: Scanned barcode: ${code.text}');
+    print('DEBUG: Format: ${barcode.format}');
+    
+    // Show action dialog instead of just saving
+    _showActionDialog(code);
+  }
+
+  void _showActionDialog(model.Code code) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('QR-Code gescannt'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Inhalt: ${code.text}', style: TextStyle(fontWeight: FontWeight.bold)),
+            SizedBox(height: 8),
+            Text('Format: ${code.formatName}'),
+            SizedBox(height: 16),
+            Text('Was möchtest du tun?'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _markWorkCompleted(code);
+            },
+            child: Text('✓ Arbeit erledigt'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _editItemInfo(code);
+            },
+            child: Text('✏️ Info ändern'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _justSaveCode(code);
+            },
+            child: Text('💾 Nur speichern'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('❌ Abbrechen'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _markWorkCompleted(model.Code code) {
+    // TODO: Implement work completion logic
+    print('DEBUG: Marking work as completed for: ${code.text}');
+    
     DbService.instance.addCode(code);
-    context.showToast('Barcode saved:\n${code.text ?? ''}');
+    context.showToast('Arbeit als erledigt markiert:\n${code.text ?? ''}');
+    setState(() {
+      _debugInfo = 'Work completed: ${code.text ?? ''}';
+    });
+  }
+
+  void _editItemInfo(model.Code code) {
+    // TODO: Implement edit info dialog
+    print('DEBUG: Editing info for: ${code.text}');
+    
+    // For now, show a simple text input dialog
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Info ändern'),
+        content: TextField(
+          decoration: InputDecoration(
+            labelText: 'Notiz',
+            hintText: 'Zusätzliche Information eingeben...',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Abbrechen'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              DbService.instance.addCode(code);
+              context.showToast('Info geändert für:\n${code.text ?? ''}');
+            },
+            child: Text('Speichern'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _justSaveCode(model.Code code) {
+    DbService.instance.addCode(code);
+    context.showToast('Code gespeichert:\n${code.text ?? ''}');
     setState(() {
       _debugInfo = 'Scan Success: ${code.text ?? ''}';
     });
+    print('DEBUG: Code saved to database');
   }
 
   void _showDebugInfo() {
