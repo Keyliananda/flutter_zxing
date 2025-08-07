@@ -5,6 +5,9 @@ import '../models/models.dart' as model;
 import '../utils/db_service.dart';
 import '../utils/api_service.dart';
 import '../utils/extensions.dart';
+import '../configs/sync_store.dart';
+import '../configs/auth_store.dart';
+import '../widgets/sync_status_widget.dart';
 
 class ScannerPage extends StatefulWidget {
   const ScannerPage({
@@ -24,6 +27,7 @@ class _ScannerPageState extends State<ScannerPage> {
       appBar: AppBar(
         title: const Text('Scanner'),
         actions: [
+          const SyncStatusWidget(),
           IconButton(
             icon: const Icon(Icons.bug_report),
             onPressed: () {
@@ -128,39 +132,24 @@ class _ScannerPageState extends State<ScannerPage> {
   }
 
   void _markWorkCompleted(model.Code code) async {
-    print('DEBUG: Marking work as completed for: ${code.text}');
+    print('DEBUG: Marking work completed for: ${code.text}');
     
-    // Save locally first
+    // Use new sync system to add scan
+    await syncStore.addScan(
+      barcode: code.text ?? '',
+      format: code.formatName,
+      action: 'completed',
+      notes: 'Arbeit als erledigt markiert',
+      userId: authStore.currentUser?.id.toString(),
+    );
+    
+    // Also save to old Code system for compatibility
     DbService.instance.addCode(code);
     
-    // Try to sync to server
-    try {
-      if (await ApiService.instance.isConnected()) {
-        // Submit scan with 'completed' status
-        await ApiService.instance.submitScan(
-          barcode: code.text ?? '',
-          format: code.formatName,
-          action: 'completed',
-          notes: 'Arbeit als erledigt markiert',
-        );
-        
-        context.showToast('✅ Arbeit erledigt & synchronisiert:\n${code.text ?? ''}');
-        setState(() {
-          _debugInfo = 'Work completed & synced: ${code.text ?? ''}';
-        });
-      } else {
-        context.showToast('✅ Arbeit erledigt (offline):\n${code.text ?? ''}\nWird später synchronisiert');
-        setState(() {
-          _debugInfo = 'Work completed (offline): ${code.text ?? ''}';
-        });
-      }
-    } catch (e) {
-      print('API Error: $e');
-      context.showToast('✅ Arbeit erledigt (lokal):\n${code.text ?? ''}\nSync-Fehler: $e');
-      setState(() {
-        _debugInfo = 'Work completed (local only): ${code.text ?? ''}';
-      });
-    }
+    context.showToast('✅ Arbeit erledigt:\n${code.text ?? ''}\n${authStore.isAuthenticated ? 'Wird synchronisiert...' : 'Offline gespeichert'}');
+    setState(() {
+      _debugInfo = 'Work completed: ${code.text ?? ''} (${authStore.isAuthenticated ? 'sync queued' : 'offline'})';
+    });
   }
 
   void _editItemInfo(model.Code code) {
@@ -196,13 +185,24 @@ class _ScannerPageState extends State<ScannerPage> {
     );
   }
 
-  void _justSaveCode(model.Code code) {
+  void _justSaveCode(model.Code code) async {
+    // Use new sync system to add scan
+    await syncStore.addScan(
+      barcode: code.text ?? '',
+      format: code.formatName,
+      action: 'scanned',
+      notes: 'Nur gespeichert',
+      userId: authStore.currentUser?.id.toString(),
+    );
+    
+    // Also save to old Code system for compatibility
     DbService.instance.addCode(code);
-    context.showToast('Code gespeichert:\n${code.text ?? ''}');
+    
+    context.showToast('Code gespeichert:\n${code.text ?? ''}\n${authStore.isAuthenticated ? 'Wird synchronisiert...' : 'Offline gespeichert'}');
     setState(() {
-      _debugInfo = 'Scan Success: ${code.text ?? ''}';
+      _debugInfo = 'Scan saved: ${code.text ?? ''} (${authStore.isAuthenticated ? 'sync queued' : 'offline'})';
     });
-    print('DEBUG: Code saved to database');
+    print('DEBUG: Code saved to database and sync queue');
   }
 
   void _showDebugInfo() {

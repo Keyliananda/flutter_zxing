@@ -5,12 +5,14 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 
 import 'configs/app_store.dart';
 import 'configs/auth_store.dart';
+import 'configs/sync_store.dart';
 import 'configs/app_theme.dart';
 import 'configs/constants.dart';
 import 'generated/l10n.dart' as loc;
 import 'utils/db_service.dart';
 import 'utils/api_service.dart';
 import 'utils/auth_service.dart';
+import 'utils/sync_service.dart';
 import 'utils/extensions.dart';
 import 'utils/router.dart';
 import 'utils/scroll_behavior.dart';
@@ -25,6 +27,8 @@ void main() async {
   ApiService.instance.initialize();
   await AuthService.instance.initialize();
   await authStore.initialize();
+  await SyncService.instance.initialize();
+  await syncStore.initialize();
   
   // Temporarily disabled due to FFI binding issue
   // zx.setLogEnabled(kDebugMode);
