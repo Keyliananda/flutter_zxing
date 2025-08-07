@@ -6,10 +6,11 @@ part of 'app_store.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$AppStore on AppStoreBase, Store {
-  final Atom _$themeModeAtom = Atom(name: 'AppStoreBase.themeMode');
+  late final _$themeModeAtom =
+      Atom(name: 'AppStoreBase.themeMode', context: context);
 
   @override
   ThemeMode get themeMode {
@@ -24,8 +25,8 @@ mixin _$AppStore on AppStoreBase, Store {
     });
   }
 
-  final Atom _$colorSchemeIndexAtom =
-      Atom(name: 'AppStoreBase.colorSchemeIndex');
+  late final _$colorSchemeIndexAtom =
+      Atom(name: 'AppStoreBase.colorSchemeIndex', context: context);
 
   @override
   int get colorSchemeIndex {
@@ -40,7 +41,8 @@ mixin _$AppStore on AppStoreBase, Store {
     });
   }
 
-  final Atom _$isSoundOnAtom = Atom(name: 'AppStoreBase.isSoundOn');
+  late final _$isSoundOnAtom =
+      Atom(name: 'AppStoreBase.isSoundOn', context: context);
 
   @override
   bool get isSoundOn {
@@ -55,7 +57,8 @@ mixin _$AppStore on AppStoreBase, Store {
     });
   }
 
-  final Atom _$isVibrationOnAtom = Atom(name: 'AppStoreBase.isVibrationOn');
+  late final _$isVibrationOnAtom =
+      Atom(name: 'AppStoreBase.isVibrationOn', context: context);
 
   @override
   bool get isVibrationOn {
@@ -70,8 +73,8 @@ mixin _$AppStore on AppStoreBase, Store {
     });
   }
 
-  final Atom _$selectedLanguageAtom =
-      Atom(name: 'AppStoreBase.selectedLanguage');
+  late final _$selectedLanguageAtom =
+      Atom(name: 'AppStoreBase.selectedLanguage', context: context);
 
   @override
   String get selectedLanguage {
@@ -86,16 +89,16 @@ mixin _$AppStore on AppStoreBase, Store {
     });
   }
 
-  final AsyncAction _$setThemeModeAsyncAction =
-      AsyncAction('AppStoreBase.setThemeMode');
+  late final _$setThemeModeAsyncAction =
+      AsyncAction('AppStoreBase.setThemeMode', context: context);
 
   @override
   Future<void> setThemeMode(ThemeMode value) {
     return _$setThemeModeAsyncAction.run(() => super.setThemeMode(value));
   }
 
-  final AsyncAction _$setColorSchemeIndexAsyncAction =
-      AsyncAction('AppStoreBase.setColorSchemeIndex');
+  late final _$setColorSchemeIndexAsyncAction =
+      AsyncAction('AppStoreBase.setColorSchemeIndex', context: context);
 
   @override
   Future<void> setColorSchemeIndex(int value) {
@@ -103,8 +106,8 @@ mixin _$AppStore on AppStoreBase, Store {
         .run(() => super.setColorSchemeIndex(value));
   }
 
-  final AsyncAction _$toggleSoundModeAsyncAction =
-      AsyncAction('AppStoreBase.toggleSoundMode');
+  late final _$toggleSoundModeAsyncAction =
+      AsyncAction('AppStoreBase.toggleSoundMode', context: context);
 
   @override
   Future<void> toggleSoundMode({bool? value}) {
@@ -112,8 +115,8 @@ mixin _$AppStore on AppStoreBase, Store {
         .run(() => super.toggleSoundMode(value: value));
   }
 
-  final AsyncAction _$toggleVibrationModeAsyncAction =
-      AsyncAction('AppStoreBase.toggleVibrationMode');
+  late final _$toggleVibrationModeAsyncAction =
+      AsyncAction('AppStoreBase.toggleVibrationMode', context: context);
 
   @override
   Future<void> toggleVibrationMode({bool? value}) {
@@ -121,8 +124,8 @@ mixin _$AppStore on AppStoreBase, Store {
         .run(() => super.toggleVibrationMode(value: value));
   }
 
-  final AsyncAction _$setLanguageAsyncAction =
-      AsyncAction('AppStoreBase.setLanguage');
+  late final _$setLanguageAsyncAction =
+      AsyncAction('AppStoreBase.setLanguage', context: context);
 
   @override
   Future<void> setLanguage(String aLanguage) {

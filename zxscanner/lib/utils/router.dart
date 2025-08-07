@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import '../pages/creator_page.dart';
 import '../pages/history_page.dart';
 import '../pages/home_page.dart';
+import '../pages/login_page.dart';
 import '../pages/scanner_page.dart';
 import '../pages/settings_page.dart';
 import '../pages/camera_test_page.dart';
+
 
 abstract class AppRoutes {
   static const String creator = '/creator';
   static const String history = '/history';
   static const String home = '/';
+  static const String login = '/login';
   static const String scanner = '/scanner';
   static const String settings = '/settings';
   static const String cameraTest = '/camera-test';
@@ -29,6 +32,10 @@ class AppRouter {
       case AppRoutes.home:
         return MaterialPageRoute<void>(
           builder: (_) => const HomePage(),
+        );
+      case AppRoutes.login:
+        return MaterialPageRoute<void>(
+          builder: (_) => const LoginPage(),
         );
       case AppRoutes.scanner:
         return MaterialPageRoute<void>(

@@ -11,6 +11,7 @@ import '../widgets/setting_tile.dart';
 // import '../widgets/language_widget.dart';
 import '../widgets/theme_mode_switch.dart';
 import '../widgets/theme_selector.dart';
+import '../widgets/auth_settings_widget.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -31,6 +32,10 @@ class _SettingsPageState extends State<SettingsPage> {
           child: Column(
             children: <Widget>[
               const SizedBox(height: spaceDefault),
+              
+              // Authentication Section
+              const AuthSettingsWidget(),
+              
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: spaceDefault),
                 child: ThemeSelector(),

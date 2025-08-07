@@ -1,13 +1,16 @@
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import 'configs/app_store.dart';
+import 'configs/auth_store.dart';
 import 'configs/app_theme.dart';
 import 'configs/constants.dart';
 import 'generated/l10n.dart' as loc;
 import 'utils/db_service.dart';
+import 'utils/api_service.dart';
+import 'utils/auth_service.dart';
 import 'utils/extensions.dart';
 import 'utils/router.dart';
 import 'utils/scroll_behavior.dart';
@@ -17,6 +20,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializePrefs();
   await DbService.instance.initializeApp();
+  
+  // Initialize services
+  ApiService.instance.initialize();
+  await AuthService.instance.initialize();
+  await authStore.initialize();
+  
   // Temporarily disabled due to FFI binding issue
   // zx.setLogEnabled(kDebugMode);
   runApp(const MyApp());
@@ -49,6 +58,7 @@ class _MyAppState extends State<MyApp> {
         supportedLocales: loc.S.delegate.supportedLocales,
         locale: appStore.selectedLanguage.parseLocale(),
         onGenerateRoute: _appRouter.onGenerateRoute,
+        initialRoute: authStore.isAuthenticated ? '/' : '/login',
         scrollBehavior: MyCustomScrollBehavior(),
         debugShowCheckedModeBanner: false,
       ),

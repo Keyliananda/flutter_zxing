@@ -11,6 +11,7 @@ class DbService {
     await Hive.initFlutter();
     Hive.registerAdapter(CodeAdapter());
     Hive.registerAdapter(EncodeAdapter());
+    Hive.registerAdapter(UserAdapter());
 
     await Hive.openBox<Code>('codes');
     await Hive.openBox<Encode>('encodes');

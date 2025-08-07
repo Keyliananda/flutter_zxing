@@ -3,6 +3,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../models/models.dart' as model;
 import '../utils/db_service.dart';
+import '../utils/api_service.dart';
 import '../utils/extensions.dart';
 
 class ScannerPage extends StatefulWidget {
@@ -27,6 +28,12 @@ class _ScannerPageState extends State<ScannerPage> {
             icon: const Icon(Icons.bug_report),
             onPressed: () {
               _showDebugInfo();
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.api),
+            onPressed: () {
+              _testApiEndpoints();
             },
           ),
         ],
@@ -120,15 +127,40 @@ class _ScannerPageState extends State<ScannerPage> {
     );
   }
 
-  void _markWorkCompleted(model.Code code) {
-    // TODO: Implement work completion logic
+  void _markWorkCompleted(model.Code code) async {
     print('DEBUG: Marking work as completed for: ${code.text}');
     
+    // Save locally first
     DbService.instance.addCode(code);
-    context.showToast('Arbeit als erledigt markiert:\n${code.text ?? ''}');
-    setState(() {
-      _debugInfo = 'Work completed: ${code.text ?? ''}';
-    });
+    
+    // Try to sync to server
+    try {
+      if (await ApiService.instance.isConnected()) {
+        // Submit scan with 'completed' status
+        await ApiService.instance.submitScan(
+          barcode: code.text ?? '',
+          format: code.formatName,
+          action: 'completed',
+          notes: 'Arbeit als erledigt markiert',
+        );
+        
+        context.showToast('✅ Arbeit erledigt & synchronisiert:\n${code.text ?? ''}');
+        setState(() {
+          _debugInfo = 'Work completed & synced: ${code.text ?? ''}';
+        });
+      } else {
+        context.showToast('✅ Arbeit erledigt (offline):\n${code.text ?? ''}\nWird später synchronisiert');
+        setState(() {
+          _debugInfo = 'Work completed (offline): ${code.text ?? ''}';
+        });
+      }
+    } catch (e) {
+      print('API Error: $e');
+      context.showToast('✅ Arbeit erledigt (lokal):\n${code.text ?? ''}\nSync-Fehler: $e');
+      setState(() {
+        _debugInfo = 'Work completed (local only): ${code.text ?? ''}';
+      });
+    }
   }
 
   void _editItemInfo(model.Code code) {
@@ -187,5 +219,44 @@ class _ScannerPageState extends State<ScannerPage> {
         ],
       ),
     );
+  }
+
+  void _testApiEndpoints() async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('🧪 API Tests'),
+        content: const Text('API-Endpunkte werden getestet...\nSchau ins Terminal für Details!'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+
+    // Run API tests in background
+    try {
+      await ApiService.instance.testAllEndpoints();
+      context.showToast('✅ API Tests abgeschlossen!\nDetails im Terminal');
+    } catch (e) {
+      context.showToast('❌ API Tests fehlgeschlagen:\n$e');
+    }
+  }
+
+  void _syncOfflineData() async {
+    try {
+      final localCodes = DbService.instance.getCodes().values.toList();
+      if (localCodes.isEmpty) {
+        context.showToast('Keine lokalen Daten zum Synchronisieren');
+        return;
+      }
+
+      await ApiService.instance.syncCodesToServer(localCodes);
+      context.showToast('✅ ${localCodes.length} Codes synchronisiert');
+    } catch (e) {
+      context.showToast('❌ Sync fehlgeschlagen: $e');
+    }
   }
 }
